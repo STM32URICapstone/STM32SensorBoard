@@ -8,3 +8,4 @@ STM32 embedded source
  - Do we want to add CI runner ?
  - Understand PR and reviewing each others code
  - Doxgyn to format and generate docs 
+hello
