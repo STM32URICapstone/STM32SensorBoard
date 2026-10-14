@@ -8,3 +8,9 @@
 | 4 | **Breadboard** | Probably already have | 1 | NA | NA | ☐ | ☐ |
 | 4 | **USB C - USB C cables** | Probably already have | 1 | NA | NA | ☐ | ☐ |
 | 4 | **Logic Analyzer (Analog Discovery / Saleae)** | Optional logic analyzer | 2 | NA | NA | ☑ | ☐ |
+| 5 | **BNO085** | BNO085 IMU Breakout Board | 3 | [Adafruit](https://www.adafruit.com/product/4754), [Amazon generic](https://a.co/d/0j15DlH1) | $20 - $30 | ☐ | ☐
+
+Budget: $1500
+| P.O. #  | P.O. Total | Cumulative Total | Remaining Budget |
+| ------- | ---------- | ---------------- | ---------------- |
+| DRAS-01 | $818.37    | $818.37          | $681.63          |
