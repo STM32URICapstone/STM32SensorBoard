@@ -26,3 +26,15 @@ Generated with [markdowneditoronline.com](https://markdowneditoronline.com/tools
 | App Main    | Print "Hello World" and blink LED         |        N/A |   Low    |
 
 Generated with [markdowneditoronline.com](https://markdowneditoronline.com/tools/markdown-table-generator)
+
+# Pins
+| Pin  | Description | Peripheral | I/O    |
+| :--: | ----------- | ---------- | ------ |
+| PC10 | Debug - TX  | UART4      | Output |
+| PC11 | Debug - RX  | UART4      | Input  |
+| PC12 | Jetson - TX | UART5      | Output |
+| PD2  | Jetson - RX | UART5      | Input  |
+| PE8  | GPS - TX    | UART7      | Output |
+| PE7  | GPS - RX    | UART7      | Input  |
+
+Generated with [markdowneditoronline.com](https://markdowneditoronline.com/tools/markdown-table-generator)
