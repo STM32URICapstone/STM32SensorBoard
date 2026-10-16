@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "stmicroelectronics.stm32-vscode-extension",
+        "ms-vscode.cmake-tools",
+        "jeff-hykin.better-cpp-syntax",
+        "ms-vscode.cpptools-extension-pack"
+    ]
+}

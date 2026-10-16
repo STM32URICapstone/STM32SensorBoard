@@ -53,3 +53,21 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+
+# CUBEMX Outputs
+# !.settings
+.clangd
+.mxproject
+.settings
+build
+cmake
+CMakePresets.json
+Drivers/CMSIS
+Drivers/STM32F*
+Middlewares
+mx.scratch
+newlib_lock_glue.c
+startup_stm32f439xx.s
+stm32_lock.h
+STM32F439xx_FLASH.ld
