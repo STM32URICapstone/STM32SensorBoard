@@ -44,4 +44,7 @@ This section needs to be completed only once unless you modify `STM32SensorBoard
 1. Click `Start Programming`
 1. Verify the progress bar at the bottom is at 100% and green
 
-## Debugging (TODO)
+## Debugging
+1. Ensure the ST-Link is disconnected in STM32CubeProgrammer
+1. In VSCode, press the `Run and Debug` icon in the left navbar (bug overlapping play button)
+1. Press the green run button at the top
