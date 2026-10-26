@@ -63,11 +63,11 @@ dkms.conf
 build
 cmake
 CMakePresets.json
-Drivers/CMSIS
-Drivers/STM32F*
 Middlewares
 mx.scratch
 newlib_lock_glue.c
-startup_stm32f439xx.s
 stm32_lock.h
-STM32F439xx_FLASH.ld
+# Drivers/CMSIS
+# Drivers/STM32F*
+# startup_stm32f439xx.s
+# STM32F439xx_FLASH.ld
