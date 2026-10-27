@@ -4,7 +4,7 @@ extern "C" {
 
 void AppSetup();
 
-void StartAppMainTask(void* argument);
+void StartAppMainTask(void *argument);
 
 #ifdef __cplusplus
 }

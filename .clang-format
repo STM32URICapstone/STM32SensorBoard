@@ -1,0 +1,17 @@
+---
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+AlignAfterOpenBracket: BlockIndent
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+ColumnLimit: 100
+FixNamespaceComments: false
+IndentCaseLabels: true
+IndentWidth: 4
+IndentWrappedFunctionNames: true
+InsertNewlineAtEOF: true
+IntegerLiteralSeparator:
+  Decimal: 3
+  DecimalMinDigits: 5
+NamespaceIndentation: All
+TabWidth: 4
