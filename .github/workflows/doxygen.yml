@@ -25,16 +25,15 @@ jobs:
 
             - name: Setup Pages
               uses: actions/configure-pages@v6
+              
+            - name: Make Build Dir
+              run: | 
+                  mkdir -p build/docs
 
             - name: Doxygen Action
               uses: mattnotmitt/doxygen-action@v1.12.0
               with:
                   doxyfile-path: Docs/Doxyfile
-
-            - name: Make Build Dir
-              run: | 
-                  mkdir build
-                  mkdir build/docs
 
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v5
