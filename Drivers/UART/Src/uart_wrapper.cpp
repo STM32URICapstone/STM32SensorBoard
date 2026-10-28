@@ -1,7 +1,6 @@
 #include "uart_wrapper.h"
 #include "portmacro.h"
 #include "stm32f4xx_hal_def.h"
-#include "stm32f4xx_ll_usb.h"
 #include <unordered_map>
 
 SemaphoreHandle_t map_mutex;
