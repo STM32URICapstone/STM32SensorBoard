@@ -17,7 +17,18 @@ struct UARTWrappedConfig {
     bool requeue_after_rx = true; /// auto requeue after the previous rx transfer completes
 };
 
+/**
+ * @brief Register a UART configuration to receive callbacks
+ * Does not start a request. See: uart_wrapper_start_rx
+ * @param config
+ */
 void uart_wrapper_register_rx(UARTWrappedConfig *config);
+
+/**
+ * @brief Start a receive request for this configuration
+ * Note: config must be registered first. See: uart_wrapper_register_rx
+ * @param config
+ */
 void uart_wrapper_start_rx(UARTWrappedConfig *config);
 
 extern "C" void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t size);
