@@ -13,6 +13,7 @@
 |PS0            |PS0           |PB9        |
 
 A picture of the nucleo board pinout for your reference
+
 ![picture of the nucleo board pinout](nucleo-pinout.png)
 
 ## Details
