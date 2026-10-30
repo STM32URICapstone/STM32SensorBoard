@@ -1,10 +1,10 @@
 #pragma once
+#include "data_defs.h"
+#include "stm32f4xx_hal.h"
 #include <concepts>
 #include <cstdint>
 #include <cstring>
-
-#include "data_defs.h"
-#include "stm32f4xx_hal.h"
+#include <span>
 
 constexpr uint16_t MAX_SENSOR_DATA_SIZE = 0x800 - 12;
 constexpr uint32_t SENSOR_SYNC_WORD = 0x55AA55AA;

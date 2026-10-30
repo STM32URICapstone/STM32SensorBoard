@@ -14,13 +14,9 @@ extern UART_HandleTypeDef huart5; // jetson
 extern UART_HandleTypeDef huart7; // gps
 extern UART_HandleTypeDef huart3; // st-link virtual com
 
-const uint16_t test_size = 2048;
-uint8_t test_uart[test_size];
-
 void gpsRxTest(void *argument);
 
 void AppSetup() {
-    uart_wrapper_setup();
     xTaskCreate(gpsRxTest, "gps uart passthrough", 128, NULL, tskIDLE_PRIORITY + 1, NULL);
 }
 
@@ -30,15 +26,33 @@ void AppSetup() {
  * @param argument unused
  */
 void gpsRxTest(void *argument) {
+
+    constexpr size_t buffer_size = 1024;
+    static uint8_t rx1[buffer_size];
+    static uint8_t rx2[buffer_size];
+
     auto &huart_debug = huart4;
     auto &huart_gps = huart7;
-    auto rx_size_q = xQueueCreate(1, sizeof(uint16_t));
-    uart_wrapper_register_rx(&huart_gps, test_uart, test_size, &rx_size_q);
 
-    uint16_t rx_size;
+    std::span<uint8_t> rx_data;
+
+    auto rx_queue = xQueueCreate(2, sizeof(rx_data));
+
+    UARTWrappedConfig config = {
+        .huart = &huart_gps,
+        .rx_queue = &rx_queue,
+        .data_buffers = {rx1, rx2},
+        .buffer_size = buffer_size,
+        .buffer_idx = 0,
+        .requeue_after_rx = true,
+    };
+
+    uart_wrapper_register_rx(&config);
+    uart_wrapper_start_rx(&config);
+
     while (true) {
-        if (xQueueReceive(rx_size_q, &rx_size, pdMS_TO_TICKS(10)) == pdPASS) {
-            HAL_UART_Transmit(&huart_debug, test_uart, rx_size, 100);
+        if (xQueueReceive(rx_queue, &rx_data, pdMS_TO_TICKS(10)) == pdPASS) {
+            HAL_UART_Transmit(&huart_debug, rx_data.data(), rx_data.size(), 100);
         }
     }
 }
