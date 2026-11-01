@@ -60,6 +60,7 @@ dkms.conf
 .clangd
 .mxproject
 .settings
+.vscode/settings.json
 build
 cmake
 CMakePresets.json
