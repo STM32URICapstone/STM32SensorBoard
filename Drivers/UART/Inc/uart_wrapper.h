@@ -1,8 +1,16 @@
+#pragma once
+
 #include "FreeRTOS.h"
+#include "message_buffer.h"
 #include "semphr.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_uart.h"
 #include <span>
+
+extern UART_HandleTypeDef huart4; // debug
+extern UART_HandleTypeDef huart5; // jetson
+extern UART_HandleTypeDef huart7; // gps
+extern UART_HandleTypeDef huart3; // st-link virtual com
 
 /**
  * @brief Holds information about a UART receiver
@@ -15,6 +23,16 @@ struct UARTWrappedConfig {
     uint16_t buffer_size;      /// size of each rx buffer
     uint8_t buffer_idx = 0;
     bool requeue_after_rx = true; /// auto requeue after the previous rx transfer completes
+};
+
+struct UARTTxWrappedConfig {
+    UART_HandleTypeDef *huart;
+    SemaphoreHandle_t tx_complete;
+    SemaphoreHandle_t tx_mutex;
+    MessageBufferHandle_t tx_msgs;
+
+    uint8_t *flat_buffer;
+    uint16_t flat_buffer_size;
 };
 
 /**
@@ -30,5 +48,11 @@ void uart_wrapper_register_rx(UARTWrappedConfig *config);
  * @param config
  */
 void uart_wrapper_start_rx(UARTWrappedConfig *config);
+
+void uart_wrapper_register_tx(UARTTxWrappedConfig *config);
+
+int uart_wrapper_enqueue_tx(UART_HandleTypeDef *huart, uint8_t *data, uint16_t size);
+
+void uart_wrapper_send_queued_tx(UARTTxWrappedConfig *config);
 
 extern "C" void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t size);

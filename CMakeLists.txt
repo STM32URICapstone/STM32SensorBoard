@@ -51,6 +51,8 @@ file(GLOB_RECURSE app_sources CONFIGURE_DEPENDS "App/Src/*.cpp")
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${app_sources}
     Drivers/UART/Src/uart_wrapper.cpp
+    App/Src/tasks/debug_print.cpp
+    App/Src/tasks/gps_rx.cpp
 )
 
 # Add include paths
