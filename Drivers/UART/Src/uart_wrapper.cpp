@@ -6,8 +6,8 @@
 #include <cstdint>
 
 // The STM32F439 has 8 UART/USART peripherals.
-static UARTWrappedConfig *rx_configs[8] = {nullptr};
-static UARTTxWrappedConfig *tx_configs[8] = {nullptr};
+static UARTWrappedRxConfig *rx_configs[8] = {nullptr};
+static UARTWrappedTxConfig *tx_configs[8] = {nullptr};
 
 // Translates the hardware register base address to a 0-7 index
 static constexpr int get_uart_index(USART_TypeDef *instance) {
@@ -22,18 +22,18 @@ static constexpr int get_uart_index(USART_TypeDef *instance) {
     return -1;
 }
 
-void uart_wrapper_register_rx(UARTWrappedConfig *config) {
+void uart_wrapper_register_rx(UARTWrappedRxConfig *config) {
     auto idx = get_uart_index(config->huart->Instance);
     if (idx < 0) return;
     rx_configs[idx] = config;
 }
 
-void uart_wrapper_start_rx(UARTWrappedConfig *config) {
+void uart_wrapper_start_rx(UARTWrappedRxConfig *config) {
     auto data_buffer = config->data_buffers[config->buffer_idx];
     HAL_UARTEx_ReceiveToIdle_IT(config->huart, data_buffer, config->buffer_size);
 }
 
-void uart_wrapper_register_tx(UARTTxWrappedConfig *config) {
+void uart_wrapper_register_tx(UARTWrappedTxConfig *config) {
     auto idx = get_uart_index(config->huart->Instance);
     if (idx < 0 || tx_configs[idx] != nullptr) return;
     config->tx_mutex = xSemaphoreCreateMutex();
@@ -41,21 +41,9 @@ void uart_wrapper_register_tx(UARTTxWrappedConfig *config) {
     tx_configs[idx] = config;
 }
 
-void uart_wrapper_send_queued_tx(UARTTxWrappedConfig *config) {
+void uart_wrapper_send_queued_tx(UARTWrappedTxConfig *config) {
     int idx = get_uart_index(config->huart->Instance);
     if (idx < 0 || tx_configs[idx] == nullptr) return;
-
-    // std::span<uint8_t> msg;
-    // if (xQueueReceive(config->tx_msgs, &msg, portMAX_DELAY) != pdPASS) return;
-
-    // xSemaphoreTake(config->tx_mutex, portMAX_DELAY);
-
-    // HAL_UART_Transmit_IT(config->huart, data, size - total_sent);
-
-    // xSemaphoreTake(
-    //     config->tx_complete, portMAX_DELAY
-    // ); // wait for completion before releasing mutex
-    // xSemaphoreGive(config->tx_mutex);
 
     size_t bytes_to_send = xMessageBufferReceive(
         config->tx_msgs, config->flat_buffer, config->flat_buffer_size, portMAX_DELAY
@@ -70,20 +58,20 @@ void uart_wrapper_send_queued_tx(UARTTxWrappedConfig *config) {
 int uart_wrapper_enqueue_tx(UART_HandleTypeDef *huart, uint8_t *data, uint16_t size) {
     int idx = get_uart_index(huart->Instance);
     if (idx < 0 || tx_configs[idx] == nullptr) return -1;
-    UARTTxWrappedConfig *config = tx_configs[idx];
+    UARTWrappedTxConfig *config = tx_configs[idx];
 
     xSemaphoreTake(config->tx_mutex, portMAX_DELAY);
-    size_t bytes_sent = xMessageBufferSend(config->tx_msgs, data, size, pdMS_TO_TICKS(10));
+    size_t bytes_queued = xMessageBufferSend(config->tx_msgs, data, size, pdMS_TO_TICKS(10));
     xSemaphoreGive(config->tx_mutex);
 
-    return size - bytes_sent; // returns number of bytes left to send if buffer was full
+    return bytes_queued;
 }
 
 extern "C" void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t size) {
     int idx = get_uart_index(huart->Instance);
     if (idx < 0 || rx_configs[idx] == nullptr) return;
 
-    UARTWrappedConfig *config = rx_configs[idx];
+    UARTWrappedRxConfig *config = rx_configs[idx];
 
     // span because buffer_idx may change before rcvr task awakes and uses data
     std::span<uint8_t> data{config->data_buffers[config->buffer_idx], size};
@@ -101,7 +89,7 @@ extern "C" void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
     int idx = get_uart_index(huart->Instance);
     if (idx < 0 || tx_configs[idx] == nullptr) return;
 
-    UARTTxWrappedConfig *config = tx_configs[idx];
+    UARTWrappedTxConfig *config = tx_configs[idx];
 
     auto awoken = pdFALSE;
     xSemaphoreGiveFromISR(config->tx_complete, &awoken);

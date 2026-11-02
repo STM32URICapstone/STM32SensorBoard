@@ -7,7 +7,7 @@ enum SensorID : uint8_t {
     NUM_SENSORS,
 };
 
-struct GPSData {
+struct [[gnu::packed]] GPSData {
     constexpr static auto sensor_id = static_cast<uint8_t>(SensorID::GPS);
 
     float latitude;
@@ -15,7 +15,7 @@ struct GPSData {
     float timestamp;
 };
 
-struct IMUData {
+struct [[gnu::packed]] IMUData {
     constexpr static auto sensor_id = static_cast<uint8_t>(SensorID::IMU);
 
     float acc_x, acc_y, acc_z;

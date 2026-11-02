@@ -1,6 +1,11 @@
 #include "tasks/gps_rx.h"
 #include "uart_wrapper.h"
 
+extern UART_HandleTypeDef huart4; // debug
+extern UART_HandleTypeDef huart5; // jetson
+extern UART_HandleTypeDef huart7; // gps
+extern UART_HandleTypeDef huart3; // st-link virtual com
+
 constexpr auto huart_debug = &huart4;
 constexpr auto huart_gps = &huart7;
 
@@ -10,7 +15,7 @@ static uint8_t rx2[buffer_size];
 
 static std::span<uint8_t> rx_data;
 static auto rx_queue = xQueueCreate(2, sizeof(rx_data));
-static UARTWrappedConfig config;
+static UARTWrappedRxConfig config;
 
 void setupGpsRxTask() {
     config = {

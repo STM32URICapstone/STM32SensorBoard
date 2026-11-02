@@ -1,3 +1,4 @@
+# Getting Started
 # Pre-requisites
 ## Hardware
 See [HardwareBoM.md](HardwareBoM.md)
