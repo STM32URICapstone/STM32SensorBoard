@@ -73,7 +73,7 @@ void uart_wrapper_register_tx(UARTWrappedTxConfig *config);
  * @param size tx data buffer size
  * @return int number of bytes queued
  */
-int uart_wrapper_enqueue_tx(UART_HandleTypeDef *huart, uint8_t *data, uint16_t size);
+int uart_wrapper_enqueue_tx(UART_HandleTypeDef *huart, const uint8_t *data, uint16_t size);
 
 /**
  * @brief sends queued data over UART using DMA/IT

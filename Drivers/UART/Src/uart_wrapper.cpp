@@ -55,7 +55,7 @@ void uart_wrapper_send_queued_tx(UARTWrappedTxConfig *config) {
     }
 }
 
-int uart_wrapper_enqueue_tx(UART_HandleTypeDef *huart, uint8_t *data, uint16_t size) {
+int uart_wrapper_enqueue_tx(UART_HandleTypeDef *huart, const uint8_t *data, uint16_t size) {
     int idx = get_uart_index(huart->Instance);
     if (idx < 0 || tx_configs[idx] == nullptr) return -1;
     UARTWrappedTxConfig *config = tx_configs[idx];
