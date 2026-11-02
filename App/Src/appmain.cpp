@@ -24,7 +24,7 @@ void gpsRxTest(void *argument);
 void imuTask(void *argument);
 
 /* ------------------------------------------------------------------------- */
-/* Debug UART (UART4), shared by printf and the GPS passthrough               */
+/* Debug UART (UART4), shared by printf and the GPS passthrough              */
 /* ------------------------------------------------------------------------- */
 
 static SemaphoreHandle_t debug_uart_mutex = nullptr;

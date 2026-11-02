@@ -30,7 +30,7 @@ Output: mag x, y, z (uTesla), mag accuracy, quat i, j, k, real, quat accuracy`
 Wait for the red LD3 on the board to light up; this indicates that the board is ready for calibration. Release the blue user button to enter calibration mode. The green LD1 will light up when both the `mag accuracy` and `quat accuracy` readings are high. At this point, you can press and release the user button again to exit calibration mode.
 
 ### Output Format:
-`mag x, y, z (uTesla)` : describe the magnetic field along each of the sensor's axes in micro Tesla
+`mag x, y, z (uTesla)` : describes the magnetic field along each of the sensor's axes in micro Tesla
 
 `mag accuracy` : describes the sensor's confidence in magnetic field reading
 
