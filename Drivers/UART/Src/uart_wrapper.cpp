@@ -10,7 +10,7 @@ static UARTWrappedRxConfig *rx_configs[8] = {nullptr};
 static UARTWrappedTxConfig *tx_configs[8] = {nullptr};
 
 // Translates the hardware register base address to a 0-7 index
-static constexpr int get_uart_index(USART_TypeDef *instance) {
+constexpr int get_uart_index(USART_TypeDef *instance) {
     if (instance == USART1) return 0;
     if (instance == USART2) return 1;
     if (instance == USART3) return 2;

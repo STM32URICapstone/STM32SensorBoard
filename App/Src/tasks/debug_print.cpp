@@ -13,7 +13,7 @@ static StaticMessageBuffer_t smb;
 
 constexpr auto huart_debug = &huart4;
 
-UARTWrappedTxConfig config;
+static UARTWrappedTxConfig config;
 
 void setupDebugPrintTask() {
     config = {
@@ -30,4 +30,23 @@ void startDebugPrintTask(void *argument) {
     while (true) {
         uart_wrapper_send_queued_tx(&config);
     }
+}
+
+// override to automatically feed printf output through the debug port
+extern "C" int _write(int file, char *ptr, int len) {
+    (void)file;
+    constexpr auto debug_uart = &huart4;
+
+
+    // guard incase printf called before task initialized
+    // using [[likely]] compiler hint because task scheduler will be running ~100% of the time
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) [[likely]] {
+        return uart_wrapper_enqueue_tx(
+            debug_uart, reinterpret_cast<uint8_t *>(ptr), static_cast<uint16_t>(len)
+        );
+    }
+
+    [[unlikely]]
+    HAL_UART_Transmit(debug_uart, reinterpret_cast<uint8_t *>(ptr), static_cast<uint16_t>(len), pdMS_TO_TICKS(10));
+    return len;
 }

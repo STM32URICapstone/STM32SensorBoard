@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 
 enum SensorID : uint8_t {
@@ -19,6 +21,7 @@ struct [[gnu::packed]] IMUData {
     constexpr static auto sensor_id = static_cast<uint8_t>(SensorID::IMU);
 
     float acc_x, acc_y, acc_z;
-    float yaw, pitch, roll;
+    // float yaw, pitch, roll;
+    float quat_i, quat_j, quat_k, quat_real;
     float mag_x, mag_y, mag_z;
 };
