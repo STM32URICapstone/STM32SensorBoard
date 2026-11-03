@@ -56,7 +56,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     App/Src/tasks/debug_print.cpp
     App/Src/tasks/gps_rx.cpp
     App/Src/tasks/jetson_tx.cpp
-    App/Src/tasks/imu_rx.cpp
+    App/Src/tasks/imu.cpp
 )
 
 # Add include paths

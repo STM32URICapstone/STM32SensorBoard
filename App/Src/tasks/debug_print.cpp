@@ -37,16 +37,16 @@ extern "C" int _write(int file, char *ptr, int len) {
     (void)file;
     constexpr auto debug_uart = &huart4;
 
-
     // guard incase printf called before task initialized
     // using [[likely]] compiler hint because task scheduler will be running ~100% of the time
     if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) [[likely]] {
-        return uart_wrapper_enqueue_tx(
+        uart_wrapper_enqueue_tx(
             debug_uart, reinterpret_cast<uint8_t *>(ptr), static_cast<uint16_t>(len)
         );
+    } else [[unlikely]] {
+        HAL_UART_Transmit(
+            debug_uart, reinterpret_cast<uint8_t *>(ptr), static_cast<uint16_t>(len), 10
+        );
     }
-
-    [[unlikely]]
-    HAL_UART_Transmit(debug_uart, reinterpret_cast<uint8_t *>(ptr), static_cast<uint16_t>(len), pdMS_TO_TICKS(10));
     return len;
 }

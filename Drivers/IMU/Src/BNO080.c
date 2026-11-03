@@ -45,7 +45,8 @@
 
 #include "BNO080.h"
 #include <math.h>
-
+#include "FreeRTOS.h"
+#include "task.h"
 
 //Global Variables
 uint8_t shtpHeader[4]; //Each packet has a header of 4 bytes
@@ -185,7 +186,7 @@ int BNO080_Initialization(void)
 	//Configure the BNO080 for SPI communication
 	WAKE_HIGH();	//Before boot up the PS0/WAK pin must be high to enter SPI mode
 	RESET_LOW();	//Reset BNO080
-	HAL_Delay(200);	//Min length not specified in datasheet?
+	vTaskDelay(pdMS_TO_TICKS(200));	//Min length not specified in datasheet?
 	RESET_HIGH();	//Bring out of reset
 	
 	BNO080_waitForSPI(); //Wait until INT pin goes low.
@@ -692,8 +693,8 @@ int BNO080_readFRSdata(uint16_t recordID, uint8_t startLocation, uint8_t wordsTo
 			{
 				if (counter++ > 100)
 					return (0); //Give up
-				HAL_Delay(1);
-			}
+				vTaskDelay(pdMS_TO_TICKS(1));
+            }
 
 			//We have the packet, inspect it for the right contents
 			//See page 40. Report ID should be 0xF3 and the FRS types should match the thing we requested
@@ -743,10 +744,10 @@ void BNO080_softReset(void)
 	BNO080_sendPacket(CHANNEL_EXECUTABLE, 1); //Transmit packet on channel 1, 1 byte
 
 	//Read all incoming data and flush it
-	HAL_Delay(50);
+	vTaskDelay(pdMS_TO_TICKS(50));
 	while (BNO080_receivePacket() == 1);
-	HAL_Delay(50);
-	while (BNO080_receivePacket() == 1);
+    vTaskDelay(pdMS_TO_TICKS(50));
+    while (BNO080_receivePacket() == 1);
 }
 
 //Get the reason for the last reset

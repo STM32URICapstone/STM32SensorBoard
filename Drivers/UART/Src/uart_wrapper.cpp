@@ -30,7 +30,7 @@ void uart_wrapper_register_rx(UARTWrappedRxConfig *config) {
 
 void uart_wrapper_start_rx(UARTWrappedRxConfig *config) {
     auto data_buffer = config->data_buffers[config->buffer_idx];
-    HAL_UARTEx_ReceiveToIdle_IT(config->huart, data_buffer, config->buffer_size);
+    HAL_UARTEx_ReceiveToIdle_DMA(config->huart, data_buffer, config->buffer_size);
 }
 
 void uart_wrapper_register_tx(UARTWrappedTxConfig *config) {
@@ -50,7 +50,7 @@ void uart_wrapper_send_queued_tx(UARTWrappedTxConfig *config) {
     );
 
     if (bytes_to_send > 0) {
-        HAL_UART_Transmit_IT(config->huart, config->flat_buffer, bytes_to_send);
+        HAL_UART_Transmit_DMA(config->huart, config->flat_buffer, bytes_to_send);
         xSemaphoreTake(config->tx_complete, portMAX_DELAY);
     }
 }
@@ -61,7 +61,7 @@ int uart_wrapper_enqueue_tx(UART_HandleTypeDef *huart, const uint8_t *data, uint
     UARTWrappedTxConfig *config = tx_configs[idx];
 
     xSemaphoreTake(config->tx_mutex, portMAX_DELAY);
-    size_t bytes_queued = xMessageBufferSend(config->tx_msgs, data, size, pdMS_TO_TICKS(10));
+    size_t bytes_queued = xMessageBufferSend(config->tx_msgs, data, size, pdMS_TO_TICKS(1));
     xSemaphoreGive(config->tx_mutex);
 
     return bytes_queued;
