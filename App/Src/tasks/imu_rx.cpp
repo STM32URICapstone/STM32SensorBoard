@@ -5,9 +5,7 @@
 #include "data_defs.h"
 #include "main.h"
 #include "message_serializer.h"
-#include "projdefs.h"
 #include "uart_wrapper.h"
-#include "task.h"
 
 extern UART_HandleTypeDef huart4; // debug
 extern UART_HandleTypeDef huart5; // jetson
@@ -19,9 +17,7 @@ constexpr uint32_t IMU_PRINT_PERIOD_MS = 100;     // print attitude at 10 Hz
 constexpr int IMU_MAX_PACKETS_PER_POLL = 8;       // bound the drain loop so we always yield
 // constexpr uint32_t IMU_TASK_STACK_WORDS = 1024;   // 4 KB: printf with floats is stack-hungry
 
-void setupImuRxTask() {
-    
-}
+void setupImuRxTask() {}
 
 void startImuRxTask(void *argument) {
     JetsonSerializer<IMUData> serializer;
@@ -36,6 +32,9 @@ void startImuRxTask(void *argument) {
     while (BNO080_Initialization() != 0) {
         printf("BNO080 init failed, retrying in 500 ms\r\n");
         vTaskDelay(pdMS_TO_TICKS(500));
+        if (HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin) == GPIO_PIN_SET) {
+            BNO080_Calibration();
+        }
         // HAL_Delay(500);
     }
 
@@ -48,7 +47,7 @@ void startImuRxTask(void *argument) {
             got_data = true;
         }
 
-        if(got_data) {
+        if (got_data) {
             taskENTER_CRITICAL();
             data.acc_x = BNO080_getAccelX();
             data.acc_y = BNO080_getAccelY();
@@ -61,8 +60,17 @@ void startImuRxTask(void *argument) {
 
             serializer.serialize(data, {serialized, serialized_buffer_size});
             uart_wrapper_enqueue_tx(&huart5, serialized, serialized_buffer_size);
+            printf(
+                "IMU: acc_x=%.6f acc_y=%.6f quat_i=%.6f quat_j=%.6f quat_k=%.6f quat_real=%.6f\r\n",
+                data.acc_x,
+                data.acc_y,
+                data.quat_i,
+                data.quat_j,
+                data.quat_k,
+                data.quat_real
+            );
         }
 
-        vTaskDelay(pdMS_TO_TICKS(IMU_REPORT_INTERVAL_US / 1000));
+        vTaskDelay(pdMS_TO_TICKS(IMU_REPORT_INTERVAL_US / 10));
     }
 }

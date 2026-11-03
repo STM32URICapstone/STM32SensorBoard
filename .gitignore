@@ -54,6 +54,8 @@ dkms.conf
 # debug information files
 *.dwo
 
+.venv/
+.env
 
 # CUBEMX Outputs
 # !.settings

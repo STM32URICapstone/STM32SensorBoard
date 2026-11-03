@@ -130,7 +130,7 @@ void AppSetup() {
     );
 
     setupImuRxTask();
-    xTaskCreate(startImuRxTask, "imu sensor task", 2048, NULL, tskIDLE_PRIORITY + 2, NULL);
+    xTaskCreate(startImuRxTask, "imu sensor task", 1024, NULL, tskIDLE_PRIORITY + 2, NULL);
 
     // if (xTaskCreate(imuTask, "imu", IMU_TASK_STACK_WORDS, NULL, tskIDLE_PRIORITY + 2, NULL) !=
     //     pdPASS) {
