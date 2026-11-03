@@ -11,10 +11,9 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-
 
 # Define the build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -45,16 +44,26 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
 )
 
+file(GLOB_RECURSE app_sources CONFIGURE_DEPENDS "App/Src/*.cpp")
+
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    App/Src/appmain.cpp
+    ${app_sources}
     Drivers/UART/Src/uart_wrapper.cpp
+    Drivers/IMU/Src/BNO080.c
+    Drivers/IMU/Src/bno080_calibration.c
+    Drivers/IMU/Src/Quaternion.c
+    App/Src/tasks/debug_print.cpp
+    App/Src/tasks/gps_rx.cpp
+    App/Src/tasks/jetson_tx.cpp
+    App/Src/tasks/imu.cpp
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     App/Inc
     Drivers/UART/Inc
+    Drivers/IMU/Inc
 )
 
 # Add project symbols (macros)
@@ -70,4 +79,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
 
     # Add user defined libraries
+)
+
+# This should add float support to project
+target_link_options(
+    ${CMAKE_PROJECT_NAME} PRIVATE -u _printf_float
 )

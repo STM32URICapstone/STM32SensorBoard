@@ -2,8 +2,10 @@
 BasedOnStyle: LLVM
 AccessModifierOffset: -4
 AlignAfterOpenBracket: BlockIndent
-AllowShortIfStatementsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AllowShortLoopsOnASingleLine: true
+BinPackArguments: false
+BinPackParameters: false
 ColumnLimit: 100
 FixNamespaceComments: false
 IndentCaseLabels: true

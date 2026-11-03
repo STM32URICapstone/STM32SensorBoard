@@ -54,12 +54,15 @@ dkms.conf
 # debug information files
 *.dwo
 
+.venv/
+.env
 
 # CUBEMX Outputs
 # !.settings
 .clangd
 .mxproject
 .settings
+.vscode/settings.json
 build
 cmake
 CMakePresets.json
