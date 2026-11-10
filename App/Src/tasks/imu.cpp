@@ -1,12 +1,17 @@
 #include "tasks/imu.h"
-#include "BNO080.h"
-#include "Quaternion.h"
-#include "bno080_calibration.h"
+
+// #include "BNO080.h"
+// #include "Quaternion.h"
+// #include "bno080_calibration.h"
+#include "mpu6050.h"
+
 #include "data_defs.h"
 #include "main.h"
 #include "message_serializer.h"
+#include "stm32f4xx_hal_def.h"
 #include "tasks/imu.h"
 #include "uart_wrapper.h"
+#include <stdio.h>
 
 extern UART_HandleTypeDef huart4; // debug
 extern UART_HandleTypeDef huart5; // jetson
@@ -27,43 +32,33 @@ void setupImuRxTask() {}
 void setupImuTxTask() {}
 
 void startImuRxTask(void *argument) {
-    if (HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin) == GPIO_PIN_SET) {
-        BNO080_Calibration();
-    }
+    // if (HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin) == GPIO_PIN_SET) {
+    //     BNO080_Calibration();
+    // }
 
-    while (BNO080_Initialization() != 0) {
-        printf("BNO080 init failed, retrying in 500 ms\r\n");
-        vTaskDelay(pdMS_TO_TICKS(1));
-        if (HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin) == GPIO_PIN_SET) {
-            BNO080_Calibration();
-        }
+    while (mpu6050_init() != HAL_OK) {
+        printf("mpu6050 init failed, retrying in 500 ms\r\n");
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
-
-    BNO080_enableAccelerometer(IMU_REPORT_INTERVAL_US);
-    BNO080_enableRotationVector(IMU_REPORT_INTERVAL_US);
 
     auto data_copy = data;
+    mpu6050data out;
 
     while (true) {
-        bool got_data = false;
-        for (int i = 0; i < IMU_MAX_PACKETS_PER_POLL && BNO080_dataAvailable() == 1; i++) {
-            got_data = true;
-        }
+        
+        if(mpu6050_read(&out) == HAL_OK){
+            data_copy.acc_x = out.accel_g[0];
+            data_copy.acc_y = out.accel_g[1];
+            data_copy.acc_z = out.accel_g[2];
+            data_copy.yaw_vel = out.gyro_dps[0];
+            data_copy.pitch_vel = out.gyro_dps[1];
+            data_copy.roll_vel = out.gyro_dps[2];
+            data_copy.temp_c = out.temp_c;
 
-        if (got_data) {
-            data_copy.acc_x = BNO080_getAccelX();
-            data_copy.acc_y = BNO080_getAccelY();
-            data_copy.acc_z = BNO080_getAccelZ();
-            data_copy.quat_i = BNO080_getQuatI();
-            data_copy.quat_j = BNO080_getQuatJ();
-            data_copy.quat_k = BNO080_getQuatK();
-            data_copy.quat_real = BNO080_getQuatReal();
-            
             taskENTER_CRITICAL();
             data = data_copy;
             taskEXIT_CRITICAL();
         }
-
         vTaskDelay(pdMS_TO_TICKS(IMU_REPORT_INTERVAL_US/1000));
     }
 }
@@ -85,15 +80,14 @@ void startImuTxTask(void *argument) {
         if (now - last_print_ms >= 100) {
             last_print_ms = now;
             printf(
-                "IMU: acc_x=%.6f acc_y=%.6f acc_z=%.6f quat_i=%.6f quat_j=%.6f quat_k=%.6f "
-                "quat_real=%.6f\r\n",
+                "IMU: acc_x=%.6f acc_y=%.6f acc_z=%.6f yaw_vel=%.6f pitch_vel=%.6f roll_vel=%.6f temp_c=%.6f\r\n",
                 data_copy.acc_x,
                 data_copy.acc_y,
                 data_copy.acc_z,
-                data_copy.quat_i,
-                data_copy.quat_j,
-                data_copy.quat_k,
-                data_copy.quat_real
+                data_copy.yaw_vel,
+                data_copy.pitch_vel,
+                data_copy.roll_vel,
+                data_copy.temp_c
             );
         }
 

@@ -21,7 +21,8 @@ struct [[gnu::packed]] IMUData {
     constexpr static auto sensor_id = static_cast<uint8_t>(SensorID::IMU);
 
     float acc_x, acc_y, acc_z;
-    // float yaw, pitch, roll;
-    float quat_i, quat_j, quat_k, quat_real;
-    float mag_x, mag_y, mag_z;
+    float yaw_vel, pitch_vel, roll_vel;
+    float temp_c;
+    // float quat_i, quat_j, quat_k, quat_real;
+    // float mag_x, mag_y, mag_z;
 };
