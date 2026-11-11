@@ -1,9 +1,6 @@
 #include "tasks/imu.h"
 
-// #include "BNO080.h"
-// #include "Quaternion.h"
-// #include "bno080_calibration.h"
-#include "mpu6050.h"
+#include "imu_i2c.h"
 
 #include "data_defs.h"
 #include "main.h"
@@ -36,8 +33,8 @@ void startImuRxTask(void *argument) {
     //     BNO080_Calibration();
     // }
 
-    while (mpu6050_init() != HAL_OK) {
-        printf("mpu6050 init failed, retrying in 500 ms\r\n");
+    while (imu_init() != HAL_OK) {
+        printf("imu init failed, retrying in 500 ms\r\n");
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 
@@ -46,7 +43,7 @@ void startImuRxTask(void *argument) {
 
     while (true) {
         
-        if(mpu6050_read(&out) == HAL_OK){
+        if(imu_read(&out) == HAL_OK){
             data_copy.acc_x = out.accel_g[0];
             data_copy.acc_y = out.accel_g[1];
             data_copy.acc_z = out.accel_g[2];

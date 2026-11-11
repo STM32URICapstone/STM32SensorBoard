@@ -15,9 +15,9 @@ typedef struct{
     float temp_c;
 } mpu6050data;
 
-HAL_StatusTypeDef mpu6050_init(void);
+HAL_StatusTypeDef imu_init(void);
 
-HAL_StatusTypeDef mpu6050_read(mpu6050data* out);
+HAL_StatusTypeDef imu_read(mpu6050data* out);
 
 #ifdef __cplusplus
 }

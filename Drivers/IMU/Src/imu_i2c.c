@@ -1,11 +1,44 @@
-#include "mpu6050.h"
+#include "imu_i2c.h"
 #include "stm32f4xx_hal_def.h"
 #include "stm32f4xx_hal_i2c.h"
 #include <stdio.h>
 
 #define DEVICE_ADDRESS  (0x68 << 1)
+
 #define I2C_TIMEOUT     100 // milliseconds
 
+#define MPU_SCL_PORT    GPIOF
+#define MPU_SCL_PIN     GPIO_PIN_1
+#define MPU_SDA_PORT    GPIOF
+#define MPU_SDA_PIN     GPIO_PIN_0
+
+#define PWR_DEVICE_RESET    0x80 // PWR_MGMT_1 bit 7
+
+// all definitions below come from the mpu6050 datasheet
+// #define FS_GYRO_250     0
+// #define FS_GYRO_500     8
+// #define FS_GYRO_1000    16
+// #define FS_GYRO_2000    24
+
+// #define FS_ACC_2G       0
+// #define FS_ACC_4G       8
+// #define FS_ACC_8G       16
+// #define FS_ACC_16G      24
+
+// #define GYRO_LSB_PER_DPS    65.5f // +-500 dps
+// #define ACCEL_LSB_PER_G     8192.0f // +-4g
+
+// #define REG_CONFIG_GYRO 27
+// #define REG_CONFIG_ACC  28
+// #define REG_USR_CTRL    107
+// #define REG_DATA        59
+
+// Below are the registers for the specific sensors, they go unused in the working code
+// #define REG_ACC         59
+// #define REG_TEMP        65
+// #define REG_GYRO        67
+
+// below are the definitions for the BNO055 IMU
 #define FS_GYRO_250     0
 #define FS_GYRO_500     8
 #define FS_GYRO_1000    16
@@ -22,22 +55,11 @@
 #define REG_CONFIG_GYRO 27
 #define REG_CONFIG_ACC  28
 #define REG_USR_CTRL    107
-#define REG_DATA        59
-// #define REG_ACC         59
-// #define REG_TEMP        65
-// #define REG_GYRO        67
-// all of the above addresses come from the mpu6050 datasheet
-
-#define MPU_SCL_PORT    GPIOF
-#define MPU_SCL_PIN     GPIO_PIN_1
-#define MPU_SDA_PORT    GPIOF
-#define MPU_SDA_PIN     GPIO_PIN_0
-
-#define PWR_DEVICE_RESET    0x80 // PWR_MGMT_1 bit 7
+#define REG_DATA        8
 
 extern I2C_HandleTypeDef hi2c2;
 
-static void mpu6050_bus_recover(void){
+static void imu_bus_recover(void){
     HAL_I2C_DeInit(&hi2c2);
  
     GPIO_InitTypeDef gpio = {0};
@@ -78,10 +100,10 @@ static void mpu6050_bus_recover(void){
     HAL_I2C_Init(&hi2c2);
 }
 
-HAL_StatusTypeDef mpu6050_init(void){
+HAL_StatusTypeDef imu_init(void){
 
     // hopefully fixes reset error
-    mpu6050_bus_recover();
+    imu_bus_recover();
 
     // HAL_I2C_IsDeviceReady(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint32_t Trials, uint32_t Timeout);
     
@@ -126,7 +148,7 @@ HAL_StatusTypeDef mpu6050_init(void){
     
 }
 
-HAL_StatusTypeDef mpu6050_read(mpu6050data* out){
+HAL_StatusTypeDef imu_read(mpu6050data* out){
     // buffer to store sensor data
     // accel: 3 axes, each axis has 2 parts (6 total)
     // temp: 2 parts

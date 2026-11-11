@@ -50,11 +50,7 @@ file(GLOB_RECURSE app_sources CONFIGURE_DEPENDS "App/Src/*.cpp")
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${app_sources}
     Drivers/UART/Src/uart_wrapper.cpp
-    # Drivers/IMU/Src/BNO080.c
-    # Drivers/IMU/Src/bno080_calibration.c
-    # Drivers/IMU/Src/Quaternion.c
-    # Drivers/IMU/Src/bno055.c
-    Drivers/IMU/Src/mpu6050.c
+    Drivers/IMU/Src/imu_i2c.c
     App/Src/tasks/debug_print.cpp
     App/Src/tasks/gps_rx.cpp
     App/Src/tasks/jetson_tx.cpp
