@@ -14,8 +14,8 @@ extern UART_HandleTypeDef huart4; // debug
 extern UART_HandleTypeDef huart5; // jetson
 extern UART_HandleTypeDef huart7; // gps
 void AppSetup() {  
-    // setupGpsRxTask();
-    // xTaskCreate(startGpsRxTask, "gps uart passthrough", 128, NULL, tskIDLE_PRIORITY + 1, NULL);
+    setupGpsRxTask();
+    xTaskCreate(startGpsRxTask, "gps uart passthrough", 128, NULL, tskIDLE_PRIORITY + 1, NULL);
 
     setupDebugPrintTask();
     xTaskCreate(startDebugPrintTask, "debug print", 128, NULL, tskIDLE_PRIORITY + 1, NULL);
@@ -25,11 +25,11 @@ void AppSetup() {
         startJetsonTxTask, "jetson uart transmitting", 128, NULL, tskIDLE_PRIORITY + 2, NULL
     );
 
-    setupImuRxTask();
-    xTaskCreate(startImuRxTask, "imu sensor rx task", 128, NULL, tskIDLE_PRIORITY + 2, NULL);
+    // setupImuRxTask();
+    // xTaskCreate(startImuRxTask, "imu sensor rx task", 128, NULL, tskIDLE_PRIORITY + 2, NULL);
     
-    setupImuTxTask();
-    xTaskCreate(startImuTxTask, "imu sensor tx task", 1024, NULL, tskIDLE_PRIORITY + 2, NULL);
+    // setupImuTxTask();
+    // xTaskCreate(startImuTxTask, "imu sensor tx task", 1024, NULL, tskIDLE_PRIORITY + 2, NULL);
 
     // if (xTaskCreate(imuTask, "imu", IMU_TASK_STACK_WORDS, NULL, tskIDLE_PRIORITY + 2, NULL) !=
     //     pdPASS) {

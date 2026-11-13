@@ -45,6 +45,8 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 file(GLOB_RECURSE app_sources CONFIGURE_DEPENDS "App/Src/*.cpp")
+file(GLOB_RECURSE task_sources CONFIGURE_DEPENDS "App/Src/tasks/*.cpp")
+file(GLOB_RECURSE gps_sources CONFIGURE_DEPENDS "Drivers/GPS/Src/*.cpp")
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
@@ -53,10 +55,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/IMU/Src/BNO080.c
     Drivers/IMU/Src/bno080_calibration.c
     Drivers/IMU/Src/Quaternion.c
-    App/Src/tasks/debug_print.cpp
-    App/Src/tasks/gps_rx.cpp
-    App/Src/tasks/jetson_tx.cpp
-    App/Src/tasks/imu.cpp
+    ${task_sources}
+    ${gps_sources}
 )
 
 # Add include paths
@@ -64,6 +64,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     App/Inc
     Drivers/UART/Inc
     Drivers/IMU/Inc
+    Drivers/GPS/Inc
 )
 
 # Add project symbols (macros)
