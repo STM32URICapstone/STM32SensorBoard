@@ -1,8 +1,6 @@
 #include "tasks/imu.h"
 
 // #include "BNO080.h"
-// #include "Quaternion.h"
-// #include "bno080_calibration.h"
 #include "mpu6050.h"
 
 #include "data_defs.h"
@@ -37,7 +35,7 @@ void startImuRxTask(void *argument) {
     // }
 
     while (mpu6050_init() != HAL_OK) {
-        printf("mpu6050 init failed, retrying in 500 ms\r\n");
+        printf("imu init failed, retrying in 500 ms\r\n");
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 
