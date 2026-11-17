@@ -13,7 +13,7 @@ references:
 // constexpr uint32_t three_char_to_u32(char[3]);
 
 #define NMEA_MAX_SENTENCE_LENGTH 82
-#define NMEA_MAX_SENTENCE_FIELDS 15 // I don't have an exact number
+#define NMEA_MAX_SENTENCE_FIELDS 36 // theoretical maximum
 
 enum class NMEA_Talker_ID {
     AI, ///< Alarm Indicator

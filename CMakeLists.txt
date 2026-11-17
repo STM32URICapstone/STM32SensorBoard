@@ -57,6 +57,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/IMU/Src/Quaternion.c
     ${task_sources}
     ${gps_sources}
+    Drivers/GPS/Src/nmea_parser.cpp
+    Drivers/GPS/Src/nmea_sentence_util.cpp
 )
 
 # Add include paths

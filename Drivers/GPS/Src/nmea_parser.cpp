@@ -1,4 +1,5 @@
 #include "nmea_parser.h"
+#include "nmea_sentence_util.h"
 #include <string_view>
 
 using std::string_view;
@@ -124,6 +125,12 @@ uint8_t nmea_parse_sentence_fields(string_view str, NMEA_Sentence_Raw *sentence_
         checksum_calc ^= c;
 
         if (c == ',') {
+            if(num_fields >= NMEA_MAX_SENTENCE_FIELDS - 1) {
+                // too many fields
+                // TODO: proper handling of this, for now just make checksum fail
+                return 0;
+            }
+
             sentence_raw->fields[num_fields] = {
                 str.data() + last_field_start_idx, i - last_field_start_idx
             };
@@ -163,18 +170,21 @@ bool nmea_parse_sentence(string_view str, NMEA_Sentence_Raw *sentence_raw) {
 
     if (talker == NMEA_Talker_ID::ERROR || sentence == NMEA_Sentence_ID::ERROR) return false;
 
+    sentence_raw->talker_id = talker;
+    sentence_raw->sentence_id = sentence;
+
     const uint8_t checksum =
         hex_to_dec(str[checksum_begin + 1]) << 4 | hex_to_dec(str[checksum_begin + 2]);
 
-    // xor of everything between $ and *, start with IDs
+    // xor of everything between $ and *, start with IDs + first comma
     uint8_t checksum_calc = 0;
-    for (auto i = 1; i <= 5; i++) checksum_calc ^= str[i];
+    for (auto i = 1; i <= 6; i++) checksum_calc ^= str[i];
 
     auto checksum_fields =
         nmea_parse_sentence_fields(str.substr(7, sen_len - min_sen_len), sentence_raw);
-    checksum_calc ^= checksum_fields;
+    // checksum_calc ^= checksum_fields;
 
-    return checksum_calc == checksum;
+    return (checksum_calc ^ checksum_fields) == checksum;
 }
 
 bool nmea_is_sentence_gps(NMEA_Sentence_Raw *sentence_raw) {
@@ -200,12 +210,12 @@ bool nmea_gps_from_raw(NMEA_Sentence_Raw *sentence_raw, NMEA_GPS_Data *gps_data)
     switch (sentence_raw->sentence_id) {
         // https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_GLL.html
         case GLL: {
-            auto raw_lat = fields[0];
-            auto raw_lat_dir = fields[1];
-            auto raw_long = fields[2];
-            auto raw_long_dir = fields[3];
-            auto raw_utc = fields[4];
-            auto raw_status = fields[5];
+            NMEA_Sentences::GLL gll;
+            if(!NMEA_Sentences::parse_gll(sentence_raw, &gll)) return false;
+
+            gps_data->latitude = gll.latitude;
+            gps_data->longitude = gll.longitude;
+
             return true;
         };
 
