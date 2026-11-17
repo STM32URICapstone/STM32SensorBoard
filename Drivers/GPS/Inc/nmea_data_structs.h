@@ -33,8 +33,8 @@ namespace nmea {
     struct Packet {
         Talker_ID talker_id;
         Sentence_ID sentence_id;
-        union {
+        union Data {
             GLL gll;
-        };
+        } data{};
     };
 }

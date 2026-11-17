@@ -209,9 +209,11 @@ namespace nmea {
         out->talker_id = sentence_raw->talker_id;
         out->sentence_id = sentence_raw->sentence_id;
 
+        auto& data = out->data;
+
         switch (sentence_raw->sentence_id) {
             case Sentence_ID::GLL:
-                return parse_gll(sentence_raw, &out->gll);
+                return parse_gll(sentence_raw, &data.gll);
 
             default:
                 return Error::Unsupported_Sentence;

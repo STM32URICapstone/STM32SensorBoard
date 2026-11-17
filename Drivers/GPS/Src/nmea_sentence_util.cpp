@@ -6,16 +6,16 @@ namespace nmea {
 
     Error parse_gll(const Sentence_Raw *sentence_raw, GLL *out) {
 
-        if(sentence_raw->num_fields < 6) return Error::Malformed_Sentence;
+        if (sentence_raw->num_fields < 6) return Error::Malformed_Sentence;
 
         auto &raw_lat = sentence_raw->fields[0];
         auto &raw_lat_dir = sentence_raw->fields[1];
         auto &raw_lon = sentence_raw->fields[2];
         auto &raw_lon_dir = sentence_raw->fields[3];
-        auto &raw_time = sentence_raw->fields[4];
+        auto &raw_time = sentence_raw->fields[4]; // TODO: implement time parsing
         auto &raw_valid = sentence_raw->fields[5];
 
-        if(raw_valid != "A") return Error::No_Fix_Other;
+        if (raw_valid != "A") return Error::No_Fix_Other;
 
         if (raw_lat.size() < 2) return Error::Malformed_Field;
         if (raw_lat_dir.empty()) return Error::Malformed_Field;
@@ -46,6 +46,11 @@ namespace nmea {
         if (raw_lon_dir[0] == 'E') out->longitude = degrees + minutes * one_over_60;
         else if (raw_lon_dir[0] == 'W') out->longitude = -(degrees + minutes * one_over_60);
         else return Error::Bad_Field_Value;
+
+        // TODO: implement time parsing
+        out->time.hours = 0;
+        out->time.minutes = 0;
+        out->time.seconds = 0.0f;
 
         return Error::Ok;
     }
