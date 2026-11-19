@@ -20,7 +20,11 @@ struct [[gnu::packed]] JetsonMessageHeader {
     uint8_t sensor_id = 0;
     uint8_t sequence_num = 0;
     uint16_t data_length = 0;
-    uint32_t crc = 0;
+    uint32_t timestamp = 0;
+    uint8_t cal_month = 0; // 1 - 12
+    uint8_t cal_day = 0; // 1 - 31
+    uint16_t cal_year = 0; 
+    // uint32_t crc = 0;
 };
 
 // template <class SensorData_t>

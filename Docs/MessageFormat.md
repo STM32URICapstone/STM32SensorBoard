@@ -15,6 +15,7 @@ Exact structure specified below.
 | Max Packet Size | 2048 bytes             |
 | Max Data Size   | 2036 bytes             |
 | Sync Word       | 0x55AA55AA             |
+| Endianness      | Little-Endian          |
 
 ## Structure
 
@@ -30,22 +31,32 @@ Exact structure specified below.
   </thead>
   <tbody>
     <tr>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">0</td>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal" colspan="4">Sync Word</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">0</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle" colspan="4">Sync Word</td>
     </tr>
     <tr>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">1</td>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Sensor ID</td>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Sequence #</td>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal" colspan="2">Data Length</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">1</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">Sensor ID</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">Sequence #</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle" colspan="2">Data Length</td>
     </tr>
     <tr>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">2</td>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal" colspan="4">32-Bit CRC</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">2</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle" colspan="4">UTC (ms since midnight)</td>
     </tr>
     <tr>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">3...N</td>
-      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal" colspan="4">Data Bytes</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">3</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">Month</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">Day</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle" colspan="2">Year</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">4...N-1</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle" colspan="4">Data Bytes</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle">N</td>
+      <td style="border:1px solid currentColor;font-family:Arial, sans-serif;font-size:14px;padding:10px 6px;text-align:center;vertical-align:middle" colspan="4">32-Bit CRC</td>
     </tr>
   </tbody>
 </table>
